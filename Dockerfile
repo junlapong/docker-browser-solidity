@@ -1,18 +1,17 @@
-FROM node
-MAINTAINER "Josep Casals <joscas@gmail.com>"
+FROM node:alpine
+MAINTAINER "Junlapong L. <junlapong@gmail.com>"
 
 # Install dependency packages
-RUN apt-get update && \
-    apt-get install -y git-core
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git make gcc g++ python
 
 # Install browser-solidity
 RUN mkdir -p /usr/src/browser-solidity
 WORKDIR /usr/src/browser-solidity
 
-RUN git clone https://github.com/ethereum/browser-solidity.git . &&\
-    git reset --hard ab0593386a761e9755e3c79968767ffa8ad2fd82
-RUN npm install && \
-    npm run build
+RUN git clone https://github.com/ethereum/browser-solidity.git .
+RUN npm install && npm run build
+RUN npm cache clean
 
 EXPOSE 8080
 CMD ["npm","run","serve"]
